@@ -1,25 +1,45 @@
-import React, { Component } from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { Component } from "react";
+import "./App.css";
+import availableCarparks from "./data/carparkAvailability";
 
 class App extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      carparks: []
+    };
+  }
+
+  async componentDidMount() {
+    try {
+      const carparks = await availableCarparks();
+      this.setState({
+        carparks
+      });
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
   render() {
     return (
       <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
+        <h1>Available Car Parks</h1>
+        <ul>
+          {this.state.carparks.length > 10 &&
+            this.state.carparks.slice(0, 10).map(carpark => {
+              return (
+                <li className="carpark" key={carpark.carpark_number}>
+                  <span className="carpark-number">
+                    Car Park Number: {carpark.carpark_number}
+                  </span>
+                  <span className="carpark-lots-available">
+                    Available Lots: {carpark.carpark_info[0].lots_available}
+                  </span>
+                </li>
+              );
+            })}
+        </ul>
       </div>
     );
   }
